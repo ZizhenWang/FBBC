@@ -8,7 +8,6 @@ from __future__ import division
 from __future__ import print_function
 
 import collections
-import csv
 import os
 import modeling
 import optimization
@@ -45,7 +44,7 @@ flags.DEFINE_string("vocab_file", 'bert_model/chinese/vocab.txt',
                     "The vocabulary file that the BERT model was trained on.")
 
 flags.DEFINE_string(
-    "bert_init_checkpoint", 'bert_model/chinese/',
+    "bert_init_checkpoint", 'bert_model/chinese/bert_model.ckpt',
     "Initial checkpoint (usually from a pre-trained BERT model).")
 
 flags.DEFINE_bool(
@@ -75,7 +74,7 @@ flags.DEFINE_integer("predict_batch_size", 8, "Total batch size for predict.")
 
 flags.DEFINE_float("learning_rate", 5e-5, "The initial learning rate for Adam.")
 
-flags.DEFINE_float("num_train_epochs", 3.0,
+flags.DEFINE_float("num_train_epochs", 1,
                    "Total number of training epochs to perform.")
 
 flags.DEFINE_float(
@@ -400,12 +399,12 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
 
   hidden_size = output_layer.shape[-1].value
 
-  # with tf.variable_scope("classifier"):
-  output_weights = tf.get_variable(
-      "output_weights", [num_labels, hidden_size],
-      initializer=tf.truncated_normal_initializer(stddev=0.02))
-  output_bias = tf.get_variable(
-      "output_bias", [num_labels], initializer=tf.zeros_initializer())
+  with tf.variable_scope("classifier"):
+    output_weights = tf.get_variable(
+        "output_weights", [num_labels, hidden_size],
+        initializer=tf.truncated_normal_initializer(stddev=0.02))
+    output_bias = tf.get_variable(
+        "output_bias", [num_labels], initializer=tf.zeros_initializer())
 
   with tf.variable_scope("loss"):
     if is_training:
@@ -573,7 +572,16 @@ def convert_examples_to_features(examples, label_list, max_seq_length,
 
 
 def main(_):
+  # logging.basicConfig(
+  #   format='%(levelname)s %(asctime)s: %(message)s',
+  #   datefmt='%m/%d/%Y %I:%M:%S %p'
+  # )
   tf.logging.set_verbosity(tf.logging.INFO)
+
+  # FLAGS._parse_flags()
+  # for key, value in sorted(FLAGS.__flags.items()):
+  #   tf.logging.info("{}={}".format(key, value))
+  # tf.logging.info('\n'*3)
 
   if not FLAGS.do_train and not FLAGS.do_eval and not FLAGS.do_predict:
     raise ValueError(

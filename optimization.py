@@ -69,8 +69,13 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
 
   tvars = tf.trainable_variables()
   if not finetune:
+    # remove BERT variables
     tvars = [var for var in tvars if 'bert' not in var.name]
   grads = tf.gradients(loss, tvars)
+
+  tf.logging.info("**** Trainable Variables ****")
+  for var in tvars:
+    tf.logging.info("  name = %s, shape = %s", var.name, var.shape)
 
   # This is how the model was pre-trained.
   (grads, _) = tf.clip_by_global_norm(grads, clip_norm=1.0)
