@@ -6,19 +6,21 @@
 1. Refactor `DataProcessor` to fit your task.
 2. run following command as BERT does
     ```
-    python simple_classifier.py --do_train=true --do_eval=true
+    python simple_classifier.py --do_train=true --do_eval=true\
+        --data_dir=YOUR_DATA_PATH --bert_config_file=CONFIG_PATH\
+        --vocab_file=VOCAB_PATH --output_dir=OUTPUT_MODEL
     ```
     if you want to fine-tune BERT model, add arg `--finetune=true`
 3. if you want to check a model is `frozen` or `finetune`, run 
     ```
-    python check_fintuned.py --raw_ckpt=BERT_MODEL_PATH --train_ckpt=YOUR_MODEL_PATH
+    python check_fintuned.py --raw_ckpt=BERT_MODEL_PATH --trained_ckpt=YOUR_MODEL_PATH
     ```
 
 ## How it works
 
 - simple_classifier.py
     
-    In this code we can choose how to use pre-trained BERT model. Notice there is a `finetune` flag default by `false` which means this classifier uses BERT as feature-based model like `ELMo`. We can also set it to `True` just like the paper does.
+    In this code we can choose how to use pre-trained BERT model. Notice there is a `finetune` flag default by `false` which means this classifier uses BERT as feature-based model like `ELMo`. We can also set it to `true` just like the paper does.
     
     Another thing is we simplify the processors here.
 

@@ -21,12 +21,20 @@ FLAGS = flags.FLAGS
 ## Required parameters
 
 flags.DEFINE_string(
-    "data_dir", 'data',
+    "data_dir", None,
     "The input data dir. Should contain the .tsv files (or other data files) "
     "for the task.")
 
 flags.DEFINE_string(
-    "output_dir", 'output_model',
+    "bert_config_file", None,
+    "The config json file corresponding to the pre-trained BERT model. "
+    "This specifies the model architecture.")
+
+flags.DEFINE_string("vocab_file", None,
+                    "The vocabulary file that the BERT model was trained on.")
+
+flags.DEFINE_string(
+    "output_dir", None,
     "The output directory where the model checkpoints will be written.")
 
 ## Other parameters
@@ -34,14 +42,6 @@ flags.DEFINE_string(
 flags.DEFINE_bool(
     "finetune", False,
     "Wheather use BERT as a fine-tunning model, or a feature-based model.")
-
-flags.DEFINE_string(
-    "bert_config_file", 'bert_model/chinese/bert_config.json',
-    "The config json file corresponding to the pre-trained BERT model. "
-    "This specifies the model architecture.")
-
-flags.DEFINE_string("vocab_file", 'bert_model/chinese/vocab.txt',
-                    "The vocabulary file that the BERT model was trained on.")
 
 flags.DEFINE_string(
     "bert_init_checkpoint", 'bert_model/chinese/bert_model.ckpt',
@@ -734,4 +734,8 @@ def main(_):
 
 
 if __name__ == "__main__":
+  flags.mark_flag_as_required("data_dir")
+  flags.mark_flag_as_required("vocab_file")
+  flags.mark_flag_as_required("bert_config_file")
+  flags.mark_flag_as_required("output_dir")
   tf.app.run()
